@@ -6,6 +6,9 @@ class TimeDelta:
     def milliseconds(self, ndigits=3):
         return round(self._delta_in_seconds * 1000, ndigits)
 
+    def seconds(self, ndigits=3):
+        return round(self._delta_in_seconds, ndigits)
+
     def __str__(self):
         return str(self._delta_in_seconds)
 

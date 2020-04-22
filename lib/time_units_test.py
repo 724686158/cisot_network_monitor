@@ -38,6 +38,15 @@ class TestTimeDelta(unittest.TestCase):
         self.assertEqual(td.milliseconds(4), 2123.4567)
         self.assertEqual(td.milliseconds(5), 2123.45670)
 
+    def test_seconds(self):
+        td = TimeDelta(2.1234567)
+        self.assertEqual(td.seconds(), 2.123)
+        self.assertEqual(td.seconds(1), 2.1)
+        self.assertEqual(td.seconds(2), 2.12)
+        self.assertEqual(td.seconds(3), 2.123)
+        self.assertEqual(td.seconds(4), 2.1235)
+        self.assertEqual(td.seconds(5), 2.12346)
+
 
 if __name__ == '__main__':
     unittest.main()
