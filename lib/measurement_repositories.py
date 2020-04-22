@@ -1,4 +1,5 @@
 import time
+import math
 
 from lib.time_units import TimeStamp, TimeDelta
 from lib.packets import ReceivedTestPacket
@@ -67,3 +68,36 @@ class LinkLatencyRepository:
                 repr += "[{0}][{1}] -> {2}\n".format(
                     dpid1, dpid2, self._latencies[dpid1][dpid2].milliseconds())
         return repr
+
+
+class BandwidthPortMeasurementData:
+    def __init__(self, switch_uptime_sec, switch_uptime_nsec, bytes_received,
+                 bytes_transferred):
+        self._measurement_ts = TimeStamp(switch_uptime_sec +
+                                         switch_uptime_nsec * 1e-9)
+        self._bytes_through = bytes_received + bytes_transferred
+
+    def __sub__(self, new):
+        time_delta = (self._measurement_ts - new._measurement_ts).seconds()
+        if time_delta == 0:
+            return 0
+        return (self._bytes_through - new._bytes_through) / time_delta
+
+
+class BandwidthPortStatsRepository:
+    def __init__(self):
+        self._stats = {}
+        self._last_measurement_data = {}
+
+    def add_stats(self, dpid, port_no, measurement_data):
+        last_measurement_data = self._last_measurement_data.setdefault(
+            dpid, {}).setdefault(port_no, None)
+        if not last_measurement_data:
+            self._last_measurement_data[dpid][port_no] = measurement_data
+            return
+        self._stats.setdefault(
+            dpid, {})[port_no] = measurement_data - last_measurement_data
+        self._last_measurement_data[dpid][port_no] = measurement_data
+
+    def get_stats(self, dpid, port_no):
+        return self._stats.setdefault(dpid, {}).setdefault(port_no, 0.0)
