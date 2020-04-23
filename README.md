@@ -3,6 +3,8 @@ Service is implemented with Ryu framework.
 
 ## Features
 - Link delay measurement
+- Bandwidth measurement
+- Packet loss rate measurement
 
 ## Launching
 - Debug mode: `ryu-manager --verbose --observe-links network_monitor.py `
