@@ -35,12 +35,6 @@ class NetworkMonitor(app_manager.RyuApp):
         self.link_latency_repository = link_monitor.link_latency_repository
         self.bandwidth_port_stats_repository = datapath_monitor.bandwidth_port_stats_repository
         self.link_repository = LinkRepository()
-        self.monitor_thread = hub.spawn(self._log)
-
-    def _log(self):
-        while True:
-            hub.sleep(5)
-            self.logger.info(json.dumps(self.create_links_view()))
 
     def create_links_view(self):
         links_view = []
