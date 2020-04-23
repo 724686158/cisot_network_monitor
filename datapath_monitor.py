@@ -43,7 +43,7 @@ class DatapathMonitor(app_manager.RyuApp):
 
     def _monitor(self):
         while True:
-            hub.sleep(5)
+            hub.sleep(1)
             for dp in self.datapaths.values():
                 self._request_port_stats(dp)
 
