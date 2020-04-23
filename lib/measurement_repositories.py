@@ -100,9 +100,10 @@ class PlrPortMeasurementData:
 
     def __sub__(self, new):
         packets_delta = new._packets_through - self._packets_through
-        if packets_delta == 0:
+        errors_delta = new._errors - self._errors
+        if packets_delta == 0 or errors_delta == 0:
             return 0
-        return self.PERCENTS_100 * (new._errors - self._errors) / packets_delta
+        return self.PERCENTS_100 * (errors_delta / packets_delta)
 
 
 class PortStatsRepository:
