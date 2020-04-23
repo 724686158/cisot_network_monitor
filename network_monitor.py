@@ -40,9 +40,9 @@ class NetworkMonitor(app_manager.RyuApp):
         links_view = []
         for link in self.link_repository.find_bidirectional_links():
             links_view.append(
-                LinkViewModel(link.src_dpid, link.dst_dpid,
-                              self.compute_delay_ms(link),
-                              self.compute_bandwidth_byte_sec(link)).__dict__)
+                LinkViewModel(
+                    link.src_dpid, link.dst_dpid, self.compute_delay_ms(link),
+                    self.compute_bandwidth_bits_per_sec(link)).__dict__)
         return links_view
 
     def compute_delay_ms(self, link):
@@ -58,7 +58,7 @@ class NetworkMonitor(app_manager.RyuApp):
         delay = link_latency - src_datapath_response_time / 2 - dst_datapath_response_time / 2
         return delay
 
-    def compute_bandwidth_byte_sec(self, link):
+    def compute_bandwidth_bits_per_sec(self, link):
         port_bw_1 = self.bandwidth_port_stats_repository.get_stats(
             link.src_dpid, link.src_port_no)
         port_bw_2 = self.bandwidth_port_stats_repository.get_stats(
@@ -73,11 +73,11 @@ class NetworkMonitor(app_manager.RyuApp):
 
 
 class LinkViewModel:
-    def __init__(self, src_dpid, dst_dpid, delay_ms, bandwidth_byte_sec):
+    def __init__(self, src_dpid, dst_dpid, delay_ms, bandwidth_bits_per_sec):
         self.src_dpid = src_dpid
         self.dst_dpid = dst_dpid
         self.delay_ms = delay_ms
-        self.bandwidth_byte_sec = bandwidth_byte_sec
+        self.bandwidth_bits_per_sec = bandwidth_bits_per_sec
 
 
 class NetworkMonitorController(ControllerBase):

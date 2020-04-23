@@ -54,7 +54,7 @@ class TestBandwidthPortMeasurementData(unittest.TestCase):
         d1 = BandwidthPortMeasurementData(1, 842000000, 13, 16)
         d2 = BandwidthPortMeasurementData(2, 842000000, 20, 21)
 
-        self.assertEqual(d2 - d1, 12.0)
+        self.assertEqual(d2 - d1, 96.0)
 
 
 class TestBandwidthPortStatsRepository(unittest.TestCase):
@@ -65,11 +65,11 @@ class TestBandwidthPortStatsRepository(unittest.TestCase):
         repo.add_stats(1, 2,
                        BandwidthPortMeasurementData(2, 842000000, 20, 21))
 
-        self.assertEqual(repo.get_stats(1, 2), 12.0)
+        self.assertEqual(repo.get_stats(1, 2), 96.0)
 
         repo.add_stats(1, 2,
                        BandwidthPortMeasurementData(3, 842000000, 25, 39))
-        self.assertEqual(repo.get_stats(1, 2), 23.0)
+        self.assertEqual(repo.get_stats(1, 2), 184.0)
 
     def test_add_stats__empty_stats(self):
         repo = BandwidthPortStatsRepository()

@@ -75,13 +75,13 @@ class BandwidthPortMeasurementData:
                  bytes_transferred):
         self._measurement_ts = TimeStamp(switch_uptime_sec +
                                          switch_uptime_nsec * 1e-9)
-        self._bytes_through = bytes_received + bytes_transferred
+        self._bits_through = 8 * (bytes_received + bytes_transferred)
 
     def __sub__(self, new):
         time_delta = (self._measurement_ts - new._measurement_ts).seconds()
         if time_delta == 0:
             return 0
-        return (self._bytes_through - new._bytes_through) / time_delta
+        return (self._bits_through - new._bits_through) / time_delta
 
 
 class BandwidthPortStatsRepository:
