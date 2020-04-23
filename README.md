@@ -11,7 +11,7 @@ Service is implemented with Ryu framework.
 ## REST API
 | method |          url          | Response Example                                   |
 |--------|:---------------------:|----------------------------------------------------|
-| GET    | /networkmonitor/links | [{"src_dpid": 1, "bandwidth_bits_per_sec": 120.03, "delay_ms": 1.8, "dst_dpid": 2}] |
+| GET    | /networkmonitor/links | [{"src_dpid": 1, "plr_percents": 0.0, "bandwidth_bit_per_sec": 120.03, "delay_ms": 1.8, "dst_dpid": 2}] |
 
 ## References
 - Ryu framework home page is `https://osrg.github.io/ryu/`
