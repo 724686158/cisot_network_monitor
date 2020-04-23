@@ -84,7 +84,28 @@ class BandwidthPortMeasurementData:
         return (self._bits_through - new._bits_through) / time_delta
 
 
-class BandwidthPortStatsRepository:
+class PlrPortMeasurementData:
+
+    PERCENTS_100 = 100
+
+    def __init__(
+        self,
+        packets_received,
+        packets_transferred,
+        receive_errors,
+        transfer_errors,
+    ):
+        self._packets_through = packets_received + packets_transferred
+        self._errors = receive_errors + transfer_errors
+
+    def __sub__(self, new):
+        packets_delta = new._packets_through - self._packets_through
+        if packets_delta == 0:
+            return 0
+        return self.PERCENTS_100 * (new._errors - self._errors) / packets_delta
+
+
+class PortStatsRepository:
     def __init__(self):
         self._stats = {}
         self._last_measurement_data = {}
