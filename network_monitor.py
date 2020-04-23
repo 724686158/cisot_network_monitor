@@ -29,10 +29,11 @@ class NetworkMonitor(app_manager.RyuApp):
         wsgi = kwargs['wsgi']
         wsgi.register(NetworkMonitorController,
                       {network_monitor_instance_name: self})
-        self.datapath_timing_repository = kwargs[
-            'datapath_monitor'].datapath_timing_repository
-        self.link_latency_repository = kwargs[
-            'link_monitor'].link_latency_repository
+        datapath_monitor = kwargs['datapath_monitor']
+        link_monitor = kwargs['link_monitor']
+        self.datapath_timing_repository = datapath_monitor.datapath_timing_repository
+        self.link_latency_repository = link_monitor.link_latency_repository
+        self.bandwidth_port_stats_repository = datapath_monitor.bandwidth_port_stats_repository
         self.link_repository = LinkRepository()
         self.monitor_thread = hub.spawn(self._log)
 
@@ -46,7 +47,8 @@ class NetworkMonitor(app_manager.RyuApp):
         for link in self.link_repository.find_bidirectional_links():
             links_view.append(
                 LinkViewModel(link.src_dpid, link.dst_dpid,
-                              self.compute_delay_ms(link)).__dict__)
+                              self.compute_delay_ms(link),
+                              self.compute_bandwidth_byte_sec(link)).__dict__)
         return links_view
 
     def compute_delay_ms(self, link):
@@ -62,6 +64,13 @@ class NetworkMonitor(app_manager.RyuApp):
         delay = link_latency - src_datapath_response_time / 2 - dst_datapath_response_time / 2
         return delay
 
+    def compute_bandwidth_byte_sec(self, link):
+        port_bw_1 = self.bandwidth_port_stats_repository.get_stats(
+            link.src_dpid, link.src_port_no)
+        port_bw_2 = self.bandwidth_port_stats_repository.get_stats(
+            link.dst_dpid, link.dst_port_no)
+        return (port_bw_1 + port_bw_2) / 2
+
     @set_ev_cls(event.EventSwitchEnter)
     def handler_switch_enter(self, ev):
         for link in copy.copy(get_link(self)):
@@ -70,10 +79,11 @@ class NetworkMonitor(app_manager.RyuApp):
 
 
 class LinkViewModel:
-    def __init__(self, src_dpid, dst_dpid, delay):
+    def __init__(self, src_dpid, dst_dpid, delay, bandwidth_byte_sec):
         self.src_dpid = src_dpid
         self.dst_dpid = dst_dpid
         self.delay_ms = delay
+        self.bandwidth_byte_sec = bandwidth_byte_sec
 
 
 class NetworkMonitorController(ControllerBase):

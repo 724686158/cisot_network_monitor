@@ -10,7 +10,8 @@ from ryu.lib.packet import ethernet
 
 from operator import attrgetter
 
-from lib.measurement_repositories import DatapathResponseTimeRepository
+from lib.measurement_repositories import DatapathResponseTimeRepository, \
+    BandwidthPortMeasurementData, BandwidthPortStatsRepository
 
 
 class DatapathMonitor(app_manager.RyuApp):
@@ -20,6 +21,7 @@ class DatapathMonitor(app_manager.RyuApp):
         super(DatapathMonitor, self).__init__(*args, **kwargs)
         self.datapaths = {}
         self.datapath_timing_repository = DatapathResponseTimeRepository()
+        self.bandwidth_port_stats_repository = BandwidthPortStatsRepository()
         self.monitor_thread = hub.spawn(self._monitor)
 
     @set_ev_cls(ofp_event.EventOFPStateChange,
@@ -40,6 +42,13 @@ class DatapathMonitor(app_manager.RyuApp):
         dpid = ev.msg.datapath.id
         self.logger.debug('stats request received: %016x', dpid)
         self._update_switch_response_time(ev)
+        body = ev.msg.body
+        for stat in sorted(body, key=attrgetter('port_no')):
+            self.bandwidth_port_stats_repository.add_stats(
+                dpid, stat.port_no,
+                BandwidthPortMeasurementData(stat.duration_sec,
+                                             stat.duration_nsec, stat.rx_bytes,
+                                             stat.tx_bytes))
 
     def _monitor(self):
         while True:
