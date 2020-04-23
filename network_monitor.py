@@ -79,10 +79,10 @@ class NetworkMonitor(app_manager.RyuApp):
 
 
 class LinkViewModel:
-    def __init__(self, src_dpid, dst_dpid, delay, bandwidth_byte_sec):
+    def __init__(self, src_dpid, dst_dpid, delay_ms, bandwidth_byte_sec):
         self.src_dpid = src_dpid
         self.dst_dpid = dst_dpid
-        self.delay_ms = delay
+        self.delay_ms = delay_ms
         self.bandwidth_byte_sec = bandwidth_byte_sec
 
 
