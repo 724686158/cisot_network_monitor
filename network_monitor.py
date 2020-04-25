@@ -33,6 +33,7 @@ import copy
 import json
 
 from lib.topology import LinkRepository, Link
+from lib.util import dpid_to_string
 
 network_monitor_instance_name = 'network_monitor'
 
@@ -105,8 +106,8 @@ class NetworkMonitor(app_manager.RyuApp):
 class LinkViewModel:
     def __init__(self, src_dpid, dst_dpid, delay_ms, bandwidth_bit_per_sec,
                  plr_percents):
-        self.src_dpid = src_dpid
-        self.dst_dpid = dst_dpid
+        self.src_dpid = dpid_to_string(src_dpid)
+        self.dst_dpid = dpid_to_string(dst_dpid)
         self.delay_ms = delay_ms
         self.bandwidth_bit_per_sec = bandwidth_bit_per_sec
         self.plr_percents = plr_percents

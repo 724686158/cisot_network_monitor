@@ -19,19 +19,15 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 #
+import unittest
+
+from lib.util import dpid_to_string
 
 
-def delete_duplicates_from_list(lst):
-    return list(dict.fromkeys(lst))
-
-
-def dpid_to_string(dpid):
-    dpid_raw_str = format(dpid, '016x')
-    dpid_str = ''
-
-    for i, c in enumerate(dpid_raw_str):
-        dpid_str += c
-        if i % 2 == 1 and i < len(dpid_raw_str) - 1:
-            dpid_str += ':'
-
-    return dpid_str
+class TestUtil(unittest.TestCase):
+    def test_dpid_to_string(self):
+        self.assertEqual(dpid_to_string(1), '00:00:00:00:00:00:00:01')
+        self.assertEqual(dpid_to_string(10), '00:00:00:00:00:00:00:0a')
+        self.assertEqual(dpid_to_string(100), '00:00:00:00:00:00:00:64')
+        self.assertEqual(dpid_to_string(23154342353),
+                         '00:00:00:05:64:1b:39:d1')
