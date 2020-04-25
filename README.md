@@ -7,8 +7,8 @@ Service is implemented with Ryu framework.
 - Packet loss rate measurement
 
 ## Launching
-- Debug mode: `ryu-manager --verbose --observe-links network_monitor.py `
-- Production mode: `ryu-manager --observe-links network_monitor.py `
+- Debug mode: `ryu-manager --verbose --observe-links network_monitor.py`
+- Production mode: `ryu-manager --observe-links network_monitor.py`
 
 ## REST API
 | method |          url          | Response Example                                   |
