@@ -121,5 +121,26 @@ class LinkMonitor(app_manager.RyuApp):
         ofproto = datapath.ofproto
         parser = datapath.ofproto_parser
 
+        # install the table-miss flow entry.
+        match = parser.OFPMatch()
+        actions = [
+            parser.OFPActionOutput(ofproto.OFPP_CONTROLLER,
+                                   ofproto.OFPCML_NO_BUFFER)
+        ]
+        self.add_flow(datapath, 0, match, actions)
+
         self.logger.debug('datapath %016x registered', datapath.id)
         self.datapaths[datapath.id] = datapath
+
+    def add_flow(self, datapath, priority, match, actions):
+        ofproto = datapath.ofproto
+        parser = datapath.ofproto_parser
+
+        inst = [
+            parser.OFPInstructionActions(ofproto.OFPIT_APPLY_ACTIONS, actions)
+        ]
+        mod = parser.OFPFlowMod(datapath=datapath,
+                                priority=priority,
+                                match=match,
+                                instructions=inst)
+        datapath.send_msg(mod)
